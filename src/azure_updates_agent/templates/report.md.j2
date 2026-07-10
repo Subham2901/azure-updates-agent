@@ -1,0 +1,36 @@
+# Azure updates report — {{ generated_at }}
+
+Scope: {{ products | join(", ") }}
+Window: changes since {{ since }}
+
+**{{ delta.new | length }} new** · **{{ delta.changed | length }} changed** · {{ delta.unchanged_count }} unchanged
+
+{% if delta.new %}
+## New updates
+{% for u in delta.new %}
+### {{ u.title }}
+- **Status:** {{ u.status.value }}
+- **Products:** {{ u.products | join(", ") }}
+- **Tags:** {{ u.tags | join(", ") }}
+{% if u.general_availability_date %}- **GA:** {{ u.general_availability_date }}
+{% endif %}- **Modified:** {{ u.modified }}
+- **Source:** [{{ u.id }}]({{ u.link }})
+
+{{ u.description }}
+
+{% endfor %}
+{% endif %}
+{% if delta.changed %}
+## Changed updates
+{% for u in delta.changed %}
+### {{ u.title }}
+- **Status:** {{ u.status.value }} · **Modified:** {{ u.modified }} · **Source:** [{{ u.id }}]({{ u.link }})
+
+{% endfor %}
+{% endif %}
+{% if not delta.new and not delta.changed %}
+_No changes for watched services in this window._
+{% endif %}
+
+---
+_Every record above is sourced verbatim from Microsoft Release Communications. Links are derived from record ids (pattern verified 2026-07-10)._

@@ -114,3 +114,38 @@ async def fetch_product_taxonomy() -> set[str]:
                         if group.get("name") == "Product":
                             return {v["value"] for v in group["values"]}
     raise MrcClientError("no Product facet group in response")
+async def enrich_with_full_descriptions(
+    updates: list[AzureUpdate],
+) -> list[AzureUpdate]:
+    """Re-fetch each update by id to obtain the untruncated description.
+
+    Deliberate bounded n+1: called only for NEW items, whose weekly
+    count is capped by watchlist scope (see ADR-0003).
+    """
+    enriched: list[AzureUpdate] = []
+    async with streamablehttp_client(MRC_URL) as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            for u in updates:
+                result = await session.call_tool(
+                    "get_azure_update_by_id", {"id": u.id}
+                )
+                if result.isError:
+                    logger.warning("by-id fetch failed for %s; keeping truncated", u.id)
+                    enriched.append(u)
+                    continue
+                text = next(
+                    (b.text for b in result.content if b.type == "text"), None
+                )
+                if text is None:
+                    raise MrcClientError(f"by-id returned no text block for {u.id}")
+                payload = json.loads(text)
+                if isinstance(payload, dict) and "items" in payload:
+                    items = payload["items"]
+                    payload = items[0] if items else None
+                if payload is None:
+                    logger.warning("by-id returned empty for %s; keeping truncated", u.id)
+                    enriched.append(u)
+                    continue
+                enriched.append(AzureUpdate.model_validate(payload))
+    return enriched
