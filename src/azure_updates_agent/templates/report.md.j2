@@ -13,7 +13,7 @@ Window: changes since {{ since }}
 - **Products:** {{ u.products | join(", ") }}
 - **Tags:** {{ u.tags | join(", ") }}
 {% if u.general_availability_date %}- **GA:** {{ u.general_availability_date }}
-{% endif %}- **Modified:** {{ u.modified }}
+{% endif %}- **Modified:** {{ u.modified | human_date }}
 - **Source:** [{{ u.id }}]({{ u.link }})
 
 {{ u.description }}
@@ -24,7 +24,7 @@ Window: changes since {{ since }}
 ## Changed updates
 {% for u in delta.changed %}
 ### {{ u.title }}
-- **Status:** {{ u.status.value }} · **Modified:** {{ u.modified }} · **Source:** [{{ u.id }}]({{ u.link }})
+- **Status:** {{ u.status.value }} · **Modified:** {{ u.modified | human_date }} · **Source:** [{{ u.id }}]({{ u.link }})
 
 {% endfor %}
 {% endif %}

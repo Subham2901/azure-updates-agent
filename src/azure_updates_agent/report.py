@@ -22,8 +22,7 @@ _env = Environment(
 )
 def _human_date(dt: object) -> str:
     """Render datetimes as YYYY-MM-DD; pass anything else through."""
-    from datetime import datetime as _dt
-    return dt.strftime("%Y-%m-%d") if isinstance(dt, _dt) else str(dt)
+    return dt.strftime("%Y-%m-%d") if isinstance(dt, datetime) else str(dt)
 
 
 _env.filters["human_date"] = _human_date
