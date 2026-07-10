@@ -7,6 +7,14 @@ from __future__ import annotations
 from datetime import datetime
 from enum import StrEnum
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl,field_validator
+from pydantic.alias_generators import to_camel
+
+class Availability(BaseModel):
+    """ One availability milestone (GA,Preview, Retirement) for an update"""
+    model_config=ConfigDict(frozen=True)
+    ring:str=""
+    year:int |None=None
+    month:str|None=None
 
 class UpdateStatus(StrEnum):
     """Lifecyle status of an Azure update, as reported by Microsoft."""
@@ -16,17 +24,22 @@ class UpdateStatus(StrEnum):
     UNKNOWN="Unknown" # Forward-comatibility fallback
 class AzureUpdate(BaseModel):
     """ A single Azure Update record from the MRC MCP server.
-    Field names mirror the upstream payload so a reviewer can diff this schema against Microsoft's documented response shape."""
-    model_config= ConfigDict(frozen=True) #immutable once parsed
+
+    Field names are snake_case internally; the alias generator maps them to Microsoft's camelCase payload at parse time."""
+    model_config= ConfigDict(frozen=True,alias_generator=to_camel,populate_by_name=True,) #immutable once parsed
+    
     id:str=Field(min_length=1)
+    base_id:str=" "
     title:str=Field(min_length=1)
     description : str =""
     status:UpdateStatus=UpdateStatus.UNKNOWN
     products: tuple[str,...]=()
+    product_categories:tuple[str,...]=()
     tags:tuple[str,...]=()
+    availabilities:tuple[Availability,...]=()
+    general_availability_date:str|None=None
     created: datetime|None=None
     modified: datetime|None=None
-    link:HttpUrl|None=None
 
     @field_validator("status",mode="before")
     @classmethod
@@ -38,7 +51,19 @@ class AzureUpdate(BaseModel):
         if isinstance(v,str) and v not in UpdateStatus:
             return UpdateStatus.UNKNOWN
         return v
-    
+    @property
+    def link(self)->str:
+        """ DERIVED field : constructed from id, not present in source data."""
+        return f"https://azure.microsoft.com/en-us/updates?id={self.id}"
+class UpdatesPage(BaseModel):
+    """ One page of the MRC response envelope (verified 2026-07-10)."""
+    model_config= ConfigDict(frozen=True, alias_generator=to_camel, populate_by_name=True)
+    items: tuple[AzureUpdate,...]=()
+    total_count:int=0
+    limit:int=0
+    offset:int=0
+    has_more:bool=False
+    returned_count:int=0
 
 
     
