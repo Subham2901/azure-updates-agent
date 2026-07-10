@@ -1,0 +1,27 @@
+[project]
+name = "azure-updates-agent"
+version = "0.1.0"
+description = "Deterministic agent that tracks Azure service updates via Microsoft's MRC MCP server, scoped to a configurable service watchlist."
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.9",
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+    "tenacity>=8.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/azure_updates_agent"]
