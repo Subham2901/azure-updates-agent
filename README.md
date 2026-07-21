@@ -69,6 +69,8 @@ flowchart TD
 
 The agent only reports each update **once** — on later runs it remembers what it has already seen and highlights only what's genuinely new or changed (for example, a feature moving from Preview to Generally Available).
 
+📊 **See [VISION.md](VISION.md) for the full roadmap diagram** showing what's live now, what's next, and possible future directions.
+
 ## Quickstart (for developers)
 
 Requires Python 3.12+ and [uv](https://github.com/astral-sh/uv).
