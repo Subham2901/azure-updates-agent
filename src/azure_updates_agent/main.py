@@ -89,4 +89,10 @@ def main() -> None:
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
     )
-    sys.exit(asyncio.run(run(parse_args(sys.argv[1:]))))
+    try:
+        exit_code = asyncio.run(run(parse_args(sys.argv[1:])))
+    except Exception as exc:  # noqa: BLE001 - top-level guard for clean CLI exit
+        logger.error("run failed: %s", exc)
+        logger.error("This is often a transient MRC server issue; try again shortly.")
+        exit_code = 1
+    sys.exit(exit_code)

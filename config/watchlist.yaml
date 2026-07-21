@@ -1,9 +1,17 @@
 # Products must match Microsoft's taxonomy EXACTLY (validated at startup).
 # Discover names: uv run python scripts/debug_filter.py
 products:
-  - "Azure Kubernetes Service (AKS)"
-  - "Azure Firewall"
-  - "Azure SQL Database"
+  - "Azure AI Document Intelligence"
+  - "App Configuration"
+  - "App Service"
+  - "Application Gateway"
+  - "Web Application Firewall"
+  - "Azure Blob Storage"
+  - "Azure Container Apps"
+  - "Azure Container Registry"
+  - "Azure DNS"
+  - "Azure Data Factory"
+  - "Azure Data Lake Storage"
 
 # Only report updates carrying at least one of these tags.
 # Empty list = all tags.
