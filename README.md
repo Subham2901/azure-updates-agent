@@ -69,7 +69,7 @@ flowchart TD
 
 The agent only reports each update **once** — on later runs it remembers what it has already seen and highlights only what's genuinely new or changed (for example, a feature moving from Preview to Generally Available).
 
-📊 **See [VISION.md](https://github.com/Subham2901/azure-updates-agent/blob/main/VISSION.md) for the full roadmap diagram** showing what's live now, what's next, and possible future directions.
+📊 **See [VISION.md](https://github.com/Subham2901/azure-updates-agent/blob/main/VISION.md) for the full roadmap diagram** showing what's live now, what's next, and possible future directions.
 
 ## Quickstart (for developers)
 
